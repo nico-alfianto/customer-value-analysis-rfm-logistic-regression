@@ -79,3 +79,21 @@ SELECT CustomerID,
        SUM(Quantity * UnitPrice) AS Revenue
 FROM online_retail
 GROUP BY CustomerID;
+
+-- Customer revenue ranking (business prioritization)
+SELECT 
+    CustomerID,
+    SUM(Quantity * UnitPrice) AS Revenue,
+    RANK() OVER (ORDER BY SUM(Quantity * UnitPrice) DESC) AS revenue_rank
+FROM online_retail
+GROUP BY CustomerID;
+
+-- Customer segmentation logic (quantile-style in SQL)
+SELECT *,
+       NTILE(3) OVER (ORDER BY Revenue DESC) AS revenue_segment
+FROM (
+    SELECT CustomerID,
+           SUM(Quantity * UnitPrice) AS Revenue
+    FROM online_retail
+    GROUP BY CustomerID
+) t;
