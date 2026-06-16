@@ -49,6 +49,7 @@ SELECT CustomerID,
        SUM(Quantity * UnitPrice) AS Revenue
 FROM online_retail
 GROUP BY CustomerID;
+```sql
 
 ---
 
