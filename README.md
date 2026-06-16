@@ -41,18 +41,6 @@ This project follows a structured analytics workflow:
 
 ---
 
-## SQL Logic Example
-The following SQL logic represents how customer revenue is calculated in a relational database:
-
-```sql
-SELECT CustomerID,
-       SUM(Quantity * UnitPrice) AS Revenue
-FROM online_retail
-GROUP BY CustomerID;
-```sql
-
----
-
 ## Key Findings
 - High-value customers contribute a disproportionate share of total revenue.
 - Monetary value is the strongest predictor of customer value.
@@ -80,3 +68,14 @@ The model shows that monetary contribution is the most important factor in deter
 ## Notebook
 
 Google Colab Notebook: (https://colab.research.google.com/drive/14EapA2vyTeJnMQtEw4exe2bffuW10ub1?usp=sharing)
+
+---
+
+## SQL Logic Example
+The following SQL logic represents how customer revenue is calculated in a relational database:
+
+```sql
+SELECT CustomerID,
+       SUM(Quantity * UnitPrice) AS Revenue
+FROM online_retail
+GROUP BY CustomerID;
