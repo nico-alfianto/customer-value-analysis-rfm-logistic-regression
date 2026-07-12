@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Value Analysis - RFM & Logistic Regression | Nico Alfianto</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e1a; --card:#111827; --card2:#1f2937; --text:#f9fafb; --muted:#9ca3af; 
+  --accent:#10b981; --accent2:#059669; --warning:#f59e0b;
+}
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+body { background: var(--bg); color: var(--text); }
+.container { max-width: 1300px; margin: 0 auto; padding: 20px; }
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #065f46 0%, #10b981 100%);
+  padding: 40px; border-radius: 20px; margin-bottom: 25px;
+  box-shadow: 0 10px 40px rgba(16,185,129,0.3);
+}
+.header h1 { font-size: 30px; font-weight: 800; }
+.header p { color: #d1fae5; margin-top: 8px; }
+
+/* KPI GRID */
+.kpi-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 25px;
+}
+.kpi-card {
+  background: linear-gradient(135deg, #065f46, #1f2937); padding: 25px; border-radius: 16px; text-align: center;
+  border: 1px solid #047857;
+}
+.kpi-card h3 { font-size: 13px; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+.kpi-card .value { font-size: 28px; font-weight: 800; margin: 10px 0; color: var(--accent); }
+.kpi-card .sub { font-size: 12px; color: var(--muted); }
+
+/* SECTION */
+.section { background: var(--card); padding: 30px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+.section h2 { font-size: 24px; color: var(--accent); margin-bottom: 15px; font-weight: 700; }
+.section h3 { font-size: 18px; color: var(--accent2); margin: 20px 0 10px; }
+
+/* TABLE */
+.table { width:100%; border-collapse: collapse; margin-top:15px; font-size:13px; }
+.table th { background: var(--card2); padding:12px; text-align:left; color: var(--accent); }
+.table td { padding:12px; border-bottom: 1px solid #374151; }
+
+/* CODE BLOCK */
+.code-block {
+  background: #0f172a; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px;
+  overflow-x: auto; margin: 10px 0; border: 1px solid #374151; color: #6ee7b7;
+}
+
+/* INSIGHT BOX */
+.insight-box {
+  background: linear-gradient(135deg, #78350f, #1f2937); padding: 20px; border-radius: 12px;
+  border-left: 4px solid var(--warning); margin: 15px 0;
+}
+.insight-box h4 { color: var(--warning); margin-bottom: 8px; }
+
+/* IMAGE GRID */
+.image-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-top: 20px;
+}
+.image-card {
+  background: #0f172a; padding: 20px; border-radius: 12px; border: 1px solid #374151;
+}
+.image-card h4 { color: var(--accent); margin-bottom: 12px; text-align: center; }
+
+/* BUTTON */
+.btn {
+  background: linear-gradient(90deg, var(--accent), var(--accent2)); color:white; padding:12px 24px;
+  border-radius:10px; text-decoration:none; font-weight:700; display:inline-block; border: none; cursor: pointer;
+  margin-top: 15px;
+}
+
+.badge { background: rgba(16,185,129,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; display: inline-block; margin-right: 8px; }
+</style>
+</head>
+<body>
+
+<div id="dashboard-to-pdf">
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <h1>Customer Value Analysis</h1>
+    <p>RFM Segmentation & Logistic Regression to Predict High-Value Customers</p>
+    <span class="badge">Python</span><span class="badge">Scikit-Learn</span><span class="badge">Pandas</span>
+    <br>
+    <button class="btn" onclick="downloadPDF()">Download Full Report PDF</button>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-grid">
+    <div class="kpi-card"><h3>Total Customers</h3><div class="value">4,338</div><div class="sub">UK Online Retail 2010-2011</div></div>
+    <div class="kpi-card"><h3>Total Revenue</h3><div class="value">£8.91M</div><div class="sub">Total Transaction Value</div></div>
+    <div class="kpi-card"><h3>High Value %</h3><div class="value">33.3%</div><div class="sub">of Customer Base</div></div>
+    <div class="kpi-card"><h3>Revenue Share</h3><div class="value">84.9%</div><div class="sub">from High Value</div></div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="section">
+    <h2>Project Overview</h2>
+    <p>Not all customers are created equal. This project analyzes Online Retail transaction data using <b>RFM Analysis</b> and <b>Logistic Regression</b> to answer two critical business questions:</p>
+    <ul style="margin-top: 10px; padding-left: 20px;">
+      <li>Which customers drive the most revenue?</li>
+      <li>Can we predict high-value customers before they spend big?</li>
+    </ul>
+    <div class="insight-box">
+      <h4>Key Finding: Pareto Principle</h4>
+      <p>High-value customers contribute 84.9% of total revenue, while only making up 33.3% of the customer base. Monetary value is the strongest predictor, followed by Frequency and Recency.</p>
+    </div>
+  </div>
+
+  <!-- DATASET -->
+  <div class="section">
+    <h2>Dataset</h2>
+    <p><b>Source:</b> Kaggle – Online Retail Dataset | UK-based online retail transactions 2010-2011</p>
+    <table class="table">
+      <tr><th>Feature</th><th>Description</th></tr>
+      <tr><td>InvoiceNo</td><td>Unique invoice number</td></tr>
+      <tr><td>CustomerID</td><td>Unique customer identifier</td></tr>
+      <tr><td>InvoiceDate</td><td>Date of transaction</td></tr>
+      <tr><td>Quantity</td><td>Quantity purchased</td></tr>
+      <tr><td>UnitPrice</td><td>Price per unit</td></tr>
+      <tr><td>Revenue</td><td>Quantity * UnitPrice</td></tr>
+    </table>
+  </div>
+
+  <!-- METHODOLOGY -->
+  <div class="section">
+    <h2>Methodology</h2>
+    <ol style="padding-left: 20px;">
+      <li><b>Data Cleaning:</b> Handle returns, missing CustomerID, outliers</li>
+      <li><b>RFM Analysis:</b> Calculate Recency, Frequency, Monetary scores</li>
+      <li><b>Segmentation:</b> Group into High, Mid, Low value tiers</li>
+      <li><b>Logistic Regression:</b> Predict probability of being high-value</li>
+      <li><b>Business Action:</b> Retention, Upsell, Reactivation strategies</li>
+    </ol>
+  </div>
+
+  <!-- RFM CODE -->
+  <div class="section">
+    <h2>RFM Calculation</h2>
+    <div class="code-block">
+snapshot_date = df['InvoiceDate'].max() + timedelta(days=1)<br><br>
+rfm = df.groupby('CustomerID').agg({<br>
+&nbsp;&nbsp;'InvoiceDate': lambda x: (snapshot_date - x.max()).days,<br>
+&nbsp;&nbsp;'InvoiceNo': 'nunique',<br>
+&nbsp;&nbsp;'Revenue': 'sum'<br>
+})<br>
+rfm.columns = ['Recency', 'Frequency', 'Monetary']
+    </div>
+  </div>
+
+  <!-- MODEL RESULT -->
+  <div class="section">
+    <h2>Logistic Regression Model</h2>
+    <p>Target: `1` = High Value Customer, `0` = Others</p>
+    <table class="table">
+      <tr><th>Metric</th><th>Class 0</th><th>Class 1</th><th>Accuracy</th></tr>
+      <tr><td>Precision</td><td>1.00</td><td>1.00</td><td rowspan="3">1.00</td></tr>
+      <tr><td>Recall</td><td>1.00</td><td>1.00</td></tr>
+      <tr><td>F1-Score</td><td>1.00</td><td>1.00</td></tr>
+    </table>
+    <div class="insight-box">
+      <h4>Feature Importance</h4>
+      <p><b>Monetary: 1.241</b> - Strongest predictor<br>
+      <b>Recency: 0.073</b> - Slight positive impact<br>
+      <b>Frequency: 0.066</b> - Small positive impact</p>
+    </div>
+  </div>
+
+  <!-- VISUALIZATION -->
+  <div class="section">
+    <h2>Customer Segmentation</h2>
+    <div class="image-grid">
+      <div class="image-card">
+        <h4>Customer Count by Segment</h4>
+        <p>High Value: 33.3% | Mid Value: 33.3% | Low Value: 33.3%</p>
+        <p style="color:var(--muted); font-size:12px; margin-top:10px;">1446 customers classified as Low Value</p>
+      </div>
+      <div class="image-card">
+        <h4>Cohort Retention Analysis</h4>
+        <p>Heatmap showing customer retention over time by cohort month</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUSINESS RECOMMENDATION -->
+  <div class="section">
+    <h2>Business Recommendations</h2>
+    <div class="feature-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:15px;">
+      <div style="background:#065f46; padding:20px; border-radius:12px;"><h4 style="color:var(--accent)">Protect VIPs</h4><p>Premium retention campaigns for High-Value customers</p></div>
+      <div style="background:#78350f; padding:20px; border-radius:12px;"><h4 style="color:var(--warning)">Upsell Middle</h4><p>Targeted offers to move Mid-Value to High-Value</p></div>
+      <div style="background:#1f2937; padding:20px; border-radius:12px;"><h4 style="color:var(--muted)">Reactivate Low</h4><p>Cost-efficient email campaigns</p></div>
+      <div style="background:#065f46; padding:20px; border-radius:12px;"><h4 style="color:var(--accent)">Predict Early</h4><p>Use model to flag high-potential new customers</p></div>
+    </div>
+  </div>
+
+  <!-- SQL EXAMPLE -->
+  <div class="section">
+    <h2>SQL Logic Example</h2>
+    <div class="code-block">
+-- Calculate total revenue per customer<br>
+SELECT CustomerID, SUM(Quantity * UnitPrice) AS Revenue<br>
+FROM online_retail<br>
+GROUP BY CustomerID;<br><br>
+-- Segment customers using NTILE<br>
+SELECT *, NTILE(3) OVER (ORDER BY Revenue DESC) AS revenue_segment<br>
+FROM ( ... ) t;
+    </div>
+  </div>
+
+  <!-- AUTHOR -->
+  <div class="section">
+    <h2>Author</h2>
+    <p><b>Nico Alfianto</b></p>
+    <p>Information Systems Student | Data Analyst Enthusiast</p>
+  </div>
+
+  <div style="text-align:center; color:var(--muted); margin:40px 0;">
+    <p>Customer Value Analysis Portfolio | 2026</p>
+  </div>
+</div>
+</div>
+
+<script>
+function downloadPDF() {
+  const element = document.getElementById('dashboard-to-pdf');
+  const opt = {
+    margin: 10,
+    filename: 'Customer_Value_RFM_NicoAlfianto.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(element).save();
+}
+</script>
+</body>
+</html>
