@@ -67,6 +67,12 @@ body { background: var(--bg); color: var(--text); }
   background: #0f172a; padding: 20px; border-radius: 12px; border: 1px solid #374151;
 }
 .image-card h4 { color: var(--accent); margin-bottom: 12px; text-align: center; }
+.image-card img {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 12px;
+  border: 1px solid #374151;
+}
 
 /* BUTTON */
 .btn {
@@ -179,11 +185,13 @@ rfm.columns = ['Recency', 'Frequency', 'Monetary']
       <div class="image-card">
         <h4>Customer Count by Segment</h4>
         <p>High Value: 33.3% | Mid Value: 33.3% | Low Value: 33.3%</p>
+        <img src="img/customer.png" alt="Customer Count by Segment" />
         <p style="color:var(--muted); font-size:12px; margin-top:10px;">1446 customers classified as Low Value</p>
       </div>
       <div class="image-card">
         <h4>Cohort Retention Analysis</h4>
         <p>Heatmap showing customer retention over time by cohort month</p>
+        <img src="img/cohort.png" alt="Cohort Retention Heatmap" />
       </div>
     </div>
   </div>
