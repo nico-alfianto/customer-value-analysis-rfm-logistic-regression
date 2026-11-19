@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Value Analysis - RFM & Logistic Regression | Nico Alfianto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0A0B;--card:#131315;--card2:#1A1A1D;--border:#232326;--text:#F4F4F5;--muted:#A1A1AA;--muted2:#71717A;--pill:#1E1E21}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+header{padding:48px 0 32px;border-bottom:1px solid var(--border)}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}
+.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted2);font-weight:600;margin-bottom:16px}
+.eyebrow span{color:var(--text)}
+h1{font-size:44px;line-height:.95;letter-spacing:-.04em;font-weight:800}
+h1 em{font-style:normal;color:var(--muted)}
+.header-desc{max-width:560px;color:var(--muted);font-size:16px;margin-top:18px;line-height:1.7}
+.header-right{text-align:right}
+.header-right strong{display:block;font-size:15px}
+.header-right p{color:var(--muted);font-size:14px;margin-top:4px}
+.header-right .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
+.btn-white{display:inline-block;background:#fff;color:#000;font-size:14px;font-weight:600;padding:11px 18px;border-radius:999px}
+.btn-white:hover{background:#E4E4E7}
+.btn-outline{display:inline-block;background:transparent;color:#fff;border:1px solid #3F3F46;font-size:14px;font-weight:600;padding:11px 18px;border-radius:999px}
+.btn-outline:hover{border-color:#fff;background:#1A1A1D}
+main{padding:32px 0 80px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:20px}
+.card h2{font-size:20px;letter-spacing:-.01em;margin-bottom:6px}
+.card h3{font-size:18px;letter-spacing:-.01em;margin-bottom:6px}
+.card p.sub{font-size:14px;color:var(--muted);margin-bottom:18px;line-height:1.7}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.kpi{background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:20px}
+.kpi span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);font-weight:600}
+.kpi b{display:block;font-size:32px;letter-spacing:-.03em;margin:8px 0 4px}
+.kpi small{font-size:13px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.image-wrapper{width:100%;height:340px;background:#0A0A0B;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;cursor:zoom-in}
+.image-wrapper img{width:100%;height:100%;object-fit:contain}
+.insight{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px;font-size:14px;line-height:1.7;color:var(--muted)}
+.insight b{color:#fff}
+.table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+.table th{text-align:left;padding:12px;border-bottom:1px solid var(--border);color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.table td{padding:12px;border-bottom:1px solid var(--border);line-height:1.6}
+.code-block{background:#0A0A0B;border:1px solid var(--border);padding:18px;border-radius:12px;font-family:ui-monospace,Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;color:#A1A1AA}
+/* PLAYGROUND */
+.pg-steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:20px}
+.pg-step{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px}
+.pg-step span{font-size:12px;color:var(--muted2);font-weight:600;letter-spacing:.08em}
+.pg-step b{display:block;font-size:14px;margin:6px 0 4px}
+.pg-step p{font-size:13px;color:var(--muted);line-height:1.6}
+.pg-preset{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.pg-preset button{font-family:inherit;background:transparent;border:1px solid #3F3F46;color:var(--text);padding:9px 14px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer}
+.pg-preset button.active{background:#fff;color:#000;border-color:#fff}
+.pg-grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px;align-items:start}
+.pg-label{font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center;margin:18px 0 10px}
+.pg-label b{background:var(--pill);border:1px solid var(--border);padding:5px 10px;border-radius:999px;font-size:12px}
+.pg-input{width:100%;height:6px;background:#27272A;border-radius:999px;-webkit-appearance:none;appearance:none;outline:none}
+.pg-input::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:#fff;border-radius:50%;border:4px solid #000;cursor:pointer}
+.pg-big{font-size:64px;font-weight:800;letter-spacing:-.05em;line-height:1}
+.pg-badge{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;border-radius:999px;white-space:nowrap}
+.pg-badge.gold{background:#422006;color:#FDE68A;border:1px solid #92400E}
+.pg-badge.green{background:#052E16;color:#86EFAC;border:1px solid #166534}
+.pg-badge.red{background:#450A0A;color:#FCA5A5;border:1px solid #7F1D1D}
+.pg-badge.gray{background:#1F2937;color:#D1D5DB;border:1px solid #374151}
+.pg-bar{height:14px;background:#27272A;border-radius:999px;overflow:hidden;margin:18px 0 8px}
+#pgFill{height:100%;width:92%;background:#FACC15;transition:width .2s}
+.pg-contrib{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:18px}
+.pg-action{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:12px}
+.pg-meta{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;font-size:12px;color:var(--muted2);line-height:1.7}
+.pg-meta b{color:var(--text)}
+.rfm-box{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px;text-align:center}
+.rfm-box div{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px}
+.rfm-box b{font-size:28px;display:block;line-height:1}
+.rfm-box span{font-size:12px;color:var(--muted2)}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);justify-content:center;align-items:center;z-index:9999}
+.modal.active{display:flex}
+.modal img{max-width:92%;max-height:88%;border-radius:12px}
+.modal-close{position:absolute;top:20px;right:30px;font-size:40px;color:#fff;cursor:pointer;font-weight:800}
+footer{border-top:1px solid var(--border);padding:28px 0 40px;color:var(--muted2);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a{color:var(--muted)}
+@media(max-width:900px){h1{font-size:36px}.kpi-grid{grid-template-columns:1fr 1fr}.grid2,.pg-grid2,.pg-steps{grid-template-columns:1fr}.header-right{text-align:left}.header-right .actions{justify-content:flex-start}.pg-big{font-size:52px}.image-wrapper{height:260px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="eyebrow">Data Analytics <span>— Online Retail Dataset</span></div>
+        <h1>Customer Value<br><em>Analysis Dashboard</em></h1>
+        <p class="header-desc">Analyzed 4,338 UK retail customers with RFM Analysis and Logistic Regression. Found that 33.3% of customers drive 84.9% of revenue, and Monetary is the strongest predictor of value.</p>
+      </div>
+      <div class="header-right">
+        <strong>Nico Alfianto</strong>
+        <p>Bogor, Indonesia</p>
+        <div class="actions">
+          <a class="btn-white" href="https://nico-myproject.github.io">Back to Portfolio</a>
+          <a class="btn-outline" href="https://colab.research.google.com/github/nico-alfianto/customer-value-analysis-rfm-logistic-regression/blob/main/customer-value-analysis-rfm-logistic-regression%20(1).ipynb" target="_blank">View Notebook</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- KPI -->
+  <div class="kpi-grid" style="margin-bottom:20px;">
+    <div class="kpi"><span>Total Customers</span><b>4,338</b><small>UK Online Retail 2010-2011</small></div>
+    <div class="kpi"><span>Total Revenue</span><b>£8.91M</b><small>Total Transaction Value</small></div>
+    <div class="kpi"><span>High Value %</span><b>33.3%</b><small>1,446 of customer base</small></div>
+    <div class="kpi"><span>Revenue Share</span><b>84.9%</b><small>From High Value segment</small></div>
+  </div>
+
+  <!-- PLAYGROUND RFM -->
+  <div class="card">
+    <div class="eyebrow" style="margin-bottom:10px;">Interactive Playground <span>— Try It Yourself</span></div>
+    <h2 style="font-size:28px;">Customer Value Calculator</h2>
+    <p class="sub" style="max-width:720px;">Start with a persona, adjust the profile, then read the segment and recommended action. This is a simplified RFM + Logistic Regression model based on the 4,338 customers in this project. Every change updates the prediction instantly, in your browser.</p>
+
+    <div class="pg-steps">
+      <div class="pg-step"><span>STEP 01</span><b>Pick a persona</b><p>Start from a real customer type. Champions, At-Risk VIP, or New Customer. No need to guess from zero.</p></div>
+      <div class="pg-step"><span>STEP 02</span><b>Adjust RFM</b><p>Change Recency, Frequency, or Monetary. Watch how the segment and High-Value probability move in real time.</p></div>
+      <div class="pg-step"><span>STEP 03</span><b>Read the action</b><p>Don't just trust the score. See which segment this customer belongs to, and what marketing action to take.</p></div>
+    </div>
+
+    <div class="pg-preset" id="pgPreset">
+      <button onclick="loadPresetRFM('champion',this)" class="active">Champions</button>
+      <button onclick="loadPresetRFM('atrisk',this)">At-Risk VIP</button>
+      <button onclick="loadPresetRFM('new',this)">New Customer</button>
+      <button onclick="loadPresetRFM('hibernating',this)">Hibernating</button>
+    </div>
+
+    <div class="pg-grid2">
+      <div>
+        <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);font-weight:600;">Input — RFM Features</div>
+        <div class="pg-label">Recency — Days Since Last Purchase <b id="pgR">5 days ago</b></div>
+        <input type="range" class="pg-input" id="pgRecency" min="1" max="365" value="5" oninput="goRFM()">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted2);margin-top:6px;"><span>1 day — Just bought</span><span>365 days — 1 year ago</span></div>
+
+        <div class="pg-label">Frequency — Total Orders <b id="pgF">25 orders</b></div>
+        <input type="range" class="pg-input" id="pgFreq" min="1" max="50" value="25" oninput="goRFM()">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted2);margin-top:6px;"><span>1 order — One-time</span><span>50 orders — Very loyal</span></div>
+
+        <div class="pg-label">Monetary — Total Spent <b id="pgM">£3,500</b></div>
+        <input type="range" class="pg-input" id="pgMoney" min="10" max="5000" value="3500" oninput="goRFM()">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted2);margin-top:6px;"><span>£10 — Small</span><span>£5,000 — Big spender</span></div>
+
+        <div class="pg-label">Avg Order Value (auto) <b id="pgAOV">£140</b></div>
+        <div style="font-size:13px;color:var(--muted);">Calculated automatically: Monetary / Frequency</div>
+      </div>
+
+      <div>
+        <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);font-weight:600;">Model Output</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:10px;gap:12px;">
+          <div><div class="pg-big" id="pgProb">94%</div><div style="font-size:13px;color:var(--muted);margin-top:6px;" id="pgConf">Probability of being High-Value • Threshold: 50%</div></div>
+          <span class="pg-badge gold" id="pgBadge">Champions</span>
+        </div>
+        <div class="pg-bar"><div id="pgFill"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted2);"><span>0% — Low Value</span><span style="color:#fff;font-weight:600;">50% Decision Threshold</span><span>100% — High Value</span></div>
+
+        <div class="rfm-box">
+          <div><b id="scoreR">5</b><span>Recency Score</span></div>
+          <div><b id="scoreF">5</b><span>Frequency Score</span></div>
+          <div><b id="scoreM">5</b><span>Monetary Score</span></div>
+        </div>
+        <div style="text-align:center;font-size:13px;color:var(--muted);margin-top:10px;">RFM Score: <b style="color:#fff;" id="rfmTotal">555</b> &nbsp;•&nbsp; <span id="rfmDesc">Top 1% — Bought recently, often, and spent big</span></div>
+
+        <div class="pg-contrib">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Why This Prediction? — Feature Contribution</div>
+          <div id="pgContrib" style="display:flex;flex-direction:column;gap:10px;"></div>
+          <div style="font-size:12px;color:var(--muted2);margin-top:12px;line-height:1.6;">Matches the model finding: Monetary is the strongest predictor (coef 1.241), followed by Frequency and Recency. Positive (yellow) pushes toward High-Value.</div>
+        </div>
+
+        <div class="pg-action">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">Recommended Action</div>
+          <div id="pgAction" style="font-size:14px;line-height:1.7;color:var(--muted);margin-top:6px;">Protect this VIP. Give early access and premium service. Do not give large discounts, you will lose margin on a customer who already loves you.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pg-meta">
+      <div><b>Model:</b> RFM Scoring (1-5) + Logistic Regression (simplified coefficients)</div>
+      <div><b>Training Data:</b> 4,338 customers, UK Online Retail 2010-2011</div>
+      <div><b>Validation:</b> Monetary &gt; Frequency &gt; Recency in determining value</div>
+      <div><b>Note:</b> For demonstration and education. Not for production decisions.</div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="card">
+    <h3>Project Overview</h3>
+    <p class="sub">Not all customers are created equal. This project answers two critical business questions: Which customers drive the most revenue? Can we predict high-value customers before they spend big?</p>
+    <div class="insight"><b>Key Finding — Pareto Principle:</b> High-value customers contribute 84.9% of total revenue, while only making up 33.3% of the customer base. Monetary value is the strongest predictor, followed by Frequency and Recency.</div>
+  </div>
+
+  <!-- 2 GAMBAR -->
+  <div class="grid2">
+    <div class="card">
+      <h3>Customer Count by Segment</h3>
+      <p class="sub">High Value: 33.3% | Mid Value: 33.3% | Low Value: 33.3% — Click to zoom.</p>
+      <div class="image-wrapper" onclick="openModal('img/customer.png')"><img src="img/customer.png" alt="Customer Count by Segment" loading="lazy"></div>
+      <div class="insight"><b>What this proves:</b> RFM segmentation creates 3 clear, actionable groups. 1,446 customers classified as Low Value.</div>
+    </div>
+    <div class="card">
+      <h3>Cohort Retention Analysis</h3>
+      <p class="sub">Heatmap showing customer retention over time by cohort month. Click to zoom.</p>
+      <div class="image-wrapper" onclick="openModal('img/cohort.png')"><img src="img/cohort.png" alt="Cohort Retention Heatmap" loading="lazy"></div>
+      <div class="insight"><b>What this proves:</b> Retention drops fast after first purchase. Early engagement matters more than late discounts.</div>
+    </div>
+  </div>
+
+  <!-- METHODOLOGY + MODEL -->
+  <div class="grid2">
+    <div class="card">
+      <h3>Methodology</h3>
+      <p class="sub">End-to-end workflow following data science best practices.</p>
+      <p style="font-size:14px;color:var(--muted);line-height:1.9;"><b style="color:#fff;">1. Data Cleaning:</b> Handle returns, missing CustomerID, outliers<br><b style="color:#fff;">2. RFM Analysis:</b> Calculate Recency, Frequency, Monetary scores<br><b style="color:#fff;">3. Segmentation:</b> Group into High, Mid, Low value tiers<br><b style="color:#fff;">4. Logistic Regression:</b> Predict probability of being high-value<br><b style="color:#fff;">5. Business Action:</b> Retention, Upsell, Reactivation strategies</p>
+    </div>
+    <div class="card">
+      <h3>Logistic Regression — Feature Importance</h3>
+      <p class="sub">Target: 1 = High Value Customer, 0 = Others</p>
+      <table class="table">
+        <tr><th>Feature</th><th>Coefficient</th><th>Interpretation</th></tr>
+        <tr><td>Monetary</td><td><b>1.241</b></td><td>Strongest predictor</td></tr>
+        <tr><td>Recency</td><td>0.073</td><td>Slight positive impact</td></tr>
+        <tr><td>Frequency</td><td>0.066</td><td>Small positive impact</td></tr>
+      </table>
+      <p style="font-size:12px;color:var(--muted2);margin-top:12px;line-height:1.6;">Note: Model shows near-perfect separation because High-Value label is derived from Monetary itself. In the Playground above, coefficients are simplified for demonstration, so the probability is interpretable and not 100%.</p>
+    </div>
+  </div>
+
+  <!-- RFM CODE -->
+  <div class="card">
+    <h3>RFM Calculation</h3>
+    <p class="sub">Core logic used in the notebook and in the Playground above.</p>
+    <div class="code-block">snapshot_date = df['InvoiceDate'].max() + timedelta(days=1)<br><br>rfm = df.groupby('CustomerID').agg({<br>&nbsp;&nbsp;'InvoiceDate': lambda x: (snapshot_date - x.max()).days,<br>&nbsp;&nbsp;'InvoiceNo': 'nunique',<br>&nbsp;&nbsp;'Revenue': 'sum'<br>})<br>rfm.columns = ['Recency', 'Frequency', 'Monetary']</div>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="card">
+    <h3>Business Recommendations</h3>
+    <p class="sub">Turn insights into revenue with these 4 strategies.</p>
+    <table class="table">
+      <tr><th>Priority</th><th>Action</th><th>Target Segment</th></tr>
+      <tr><td>High</td><td>Protect VIPs — Premium retention, early access</td><td>Champions / High Value</td></tr>
+      <tr><td>High</td><td>Upsell the Middle — Targeted offers to increase Frequency</td><td>Mid Value</td></tr>
+      <tr><td>Medium</td><td>Reactivate at Low Cost — Automated email campaigns</td><td>Low Value / Hibernating</td></tr>
+      <tr><td>Medium</td><td>Predict Early — Flag new customers with high-value potential</td><td>New Customers</td></tr>
+    </table>
+  </div>
+
+  <!-- SQL -->
+  <div class="card">
+    <h3>SQL Logic Example</h3>
+    <p class="sub">How core RFM metrics are calculated in a relational database.</p>
+    <div class="code-block">-- Calculate total revenue per customer<br>SELECT CustomerID, SUM(Quantity * UnitPrice) AS Revenue<br>FROM online_retail<br>GROUP BY CustomerID;<br><br>-- Segment customers using NTILE<br>SELECT *, NTILE(3) OVER (ORDER BY Revenue DESC) AS revenue_segment<br>FROM ( ... ) t;</div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Nico Alfianto — Customer Value Analysis. Data Source: Kaggle Online Retail</span>
+    <span><a href="https://github.com/nico-alfianto/customer-value-analysis-rfm-logistic-regression" target="_blank">GitHub</a> &nbsp;·&nbsp; <a href="https://nico-myproject.github.io">Portfolio</a></span>
+  </div>
+</footer>
+
+<div class="modal" id="imageModal" onclick="closeModal()"><span class="modal-close">&times;</span><img id="modalImg" src="" alt="Full View"></div>
+
+<script>
+// --- RFM PLAYGROUND ---
+function rScore(
