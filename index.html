@@ -46,7 +46,6 @@ main{padding:32px 0 80px}
 .table th{text-align:left;padding:12px;border-bottom:1px solid var(--border);color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
 .table td{padding:12px;border-bottom:1px solid var(--border);line-height:1.6}
 .code-block{background:#0A0A0B;border:1px solid var(--border);padding:18px;border-radius:12px;font-family:ui-monospace,Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;color:#A1A1AA}
-/* PLAYGROUND */
 .pg-steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:20px}
 .pg-step{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px}
 .pg-step span{font-size:12px;color:var(--muted2);font-weight:600;letter-spacing:.08em}
@@ -87,7 +86,6 @@ footer a{color:var(--muted)}
 </style>
 </head>
 <body>
-
 <header>
   <div class="wrap">
     <div class="top">
@@ -107,55 +105,43 @@ footer a{color:var(--muted)}
     </div>
   </div>
 </header>
-
 <main class="wrap">
-
-  <!-- KPI -->
   <div class="kpi-grid" style="margin-bottom:20px;">
     <div class="kpi"><span>Total Customers</span><b>4,338</b><small>UK Online Retail 2010-2011</small></div>
     <div class="kpi"><span>Total Revenue</span><b>£8.91M</b><small>Total Transaction Value</small></div>
     <div class="kpi"><span>High Value %</span><b>33.3%</b><small>1,446 of customer base</small></div>
     <div class="kpi"><span>Revenue Share</span><b>84.9%</b><small>From High Value segment</small></div>
   </div>
-
-  <!-- PLAYGROUND RFM -->
   <div class="card">
     <div class="eyebrow" style="margin-bottom:10px;">Interactive Playground <span>— Try It Yourself</span></div>
     <h2 style="font-size:28px;">Customer Value Calculator</h2>
     <p class="sub" style="max-width:720px;">Start with a persona, adjust the profile, then read the segment and recommended action. This is a simplified RFM + Logistic Regression model based on the 4,338 customers in this project. Every change updates the prediction instantly, in your browser.</p>
-
     <div class="pg-steps">
       <div class="pg-step"><span>STEP 01</span><b>Pick a persona</b><p>Start from a real customer type. Champions, At-Risk VIP, or New Customer. No need to guess from zero.</p></div>
       <div class="pg-step"><span>STEP 02</span><b>Adjust RFM</b><p>Change Recency, Frequency, or Monetary. Watch how the segment and High-Value probability move in real time.</p></div>
       <div class="pg-step"><span>STEP 03</span><b>Read the action</b><p>Don't just trust the score. See which segment this customer belongs to, and what marketing action to take.</p></div>
     </div>
-
     <div class="pg-preset" id="pgPreset">
       <button onclick="loadPresetRFM('champion',this)" class="active">Champions</button>
       <button onclick="loadPresetRFM('atrisk',this)">At-Risk VIP</button>
       <button onclick="loadPresetRFM('new',this)">New Customer</button>
       <button onclick="loadPresetRFM('hibernating',this)">Hibernating</button>
     </div>
-
     <div class="pg-grid2">
       <div>
         <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);font-weight:600;">Input — RFM Features</div>
         <div class="pg-label">Recency — Days Since Last Purchase <b id="pgR">5 days ago</b></div>
         <input type="range" class="pg-input" id="pgRecency" min="1" max="365" value="5" oninput="goRFM()">
         <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted2);margin-top:6px;"><span>1 day — Just bought</span><span>365 days — 1 year ago</span></div>
-
         <div class="pg-label">Frequency — Total Orders <b id="pgF">25 orders</b></div>
         <input type="range" class="pg-input" id="pgFreq" min="1" max="50" value="25" oninput="goRFM()">
         <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted2);margin-top:6px;"><span>1 order — One-time</span><span>50 orders — Very loyal</span></div>
-
         <div class="pg-label">Monetary — Total Spent <b id="pgM">£3,500</b></div>
         <input type="range" class="pg-input" id="pgMoney" min="10" max="5000" value="3500" oninput="goRFM()">
         <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted2);margin-top:6px;"><span>£10 — Small</span><span>£5,000 — Big spender</span></div>
-
         <div class="pg-label">Avg Order Value (auto) <b id="pgAOV">£140</b></div>
         <div style="font-size:13px;color:var(--muted);">Calculated automatically: Monetary / Frequency</div>
       </div>
-
       <div>
         <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);font-weight:600;">Model Output</div>
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:10px;gap:12px;">
@@ -164,27 +150,23 @@ footer a{color:var(--muted)}
         </div>
         <div class="pg-bar"><div id="pgFill"></div></div>
         <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted2);"><span>0% — Low Value</span><span style="color:#fff;font-weight:600;">50% Decision Threshold</span><span>100% — High Value</span></div>
-
         <div class="rfm-box">
           <div><b id="scoreR">5</b><span>Recency Score</span></div>
           <div><b id="scoreF">5</b><span>Frequency Score</span></div>
           <div><b id="scoreM">5</b><span>Monetary Score</span></div>
         </div>
         <div style="text-align:center;font-size:13px;color:var(--muted);margin-top:10px;">RFM Score: <b style="color:#fff;" id="rfmTotal">555</b> &nbsp;•&nbsp; <span id="rfmDesc">Top 1% — Bought recently, often, and spent big</span></div>
-
         <div class="pg-contrib">
           <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Why This Prediction? — Feature Contribution</div>
           <div id="pgContrib" style="display:flex;flex-direction:column;gap:10px;"></div>
           <div style="font-size:12px;color:var(--muted2);margin-top:12px;line-height:1.6;">Matches the model finding: Monetary is the strongest predictor (coef 1.241), followed by Frequency and Recency. Positive (yellow) pushes toward High-Value.</div>
         </div>
-
         <div class="pg-action">
           <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">Recommended Action</div>
           <div id="pgAction" style="font-size:14px;line-height:1.7;color:var(--muted);margin-top:6px;">Protect this VIP. Give early access and premium service. Do not give large discounts, you will lose margin on a customer who already loves you.</div>
         </div>
       </div>
     </div>
-
     <div class="pg-meta">
       <div><b>Model:</b> RFM Scoring (1-5) + Logistic Regression (simplified coefficients)</div>
       <div><b>Training Data:</b> 4,338 customers, UK Online Retail 2010-2011</div>
@@ -192,15 +174,11 @@ footer a{color:var(--muted)}
       <div><b>Note:</b> For demonstration and education. Not for production decisions.</div>
     </div>
   </div>
-
-  <!-- OVERVIEW -->
-  <div class="card">
+    <div class="card">
     <h3>Project Overview</h3>
     <p class="sub">Not all customers are created equal. This project answers two critical business questions: Which customers drive the most revenue? Can we predict high-value customers before they spend big?</p>
     <div class="insight"><b>Key Finding — Pareto Principle:</b> High-value customers contribute 84.9% of total revenue, while only making up 33.3% of the customer base. Monetary value is the strongest predictor, followed by Frequency and Recency.</div>
   </div>
-
-  <!-- 2 GAMBAR -->
   <div class="grid2">
     <div class="card">
       <h3>Customer Count by Segment</h3>
@@ -215,8 +193,6 @@ footer a{color:var(--muted)}
       <div class="insight"><b>What this proves:</b> Retention drops fast after first purchase. Early engagement matters more than late discounts.</div>
     </div>
   </div>
-
-  <!-- METHODOLOGY + MODEL -->
   <div class="grid2">
     <div class="card">
       <h3>Methodology</h3>
@@ -235,15 +211,11 @@ footer a{color:var(--muted)}
       <p style="font-size:12px;color:var(--muted2);margin-top:12px;line-height:1.6;">Note: Model shows near-perfect separation because High-Value label is derived from Monetary itself. In the Playground above, coefficients are simplified for demonstration, so the probability is interpretable and not 100%.</p>
     </div>
   </div>
-
-  <!-- RFM CODE -->
   <div class="card">
     <h3>RFM Calculation</h3>
     <p class="sub">Core logic used in the notebook and in the Playground above.</p>
     <div class="code-block">snapshot_date = df['InvoiceDate'].max() + timedelta(days=1)<br><br>rfm = df.groupby('CustomerID').agg({<br>&nbsp;&nbsp;'InvoiceDate': lambda x: (snapshot_date - x.max()).days,<br>&nbsp;&nbsp;'InvoiceNo': 'nunique',<br>&nbsp;&nbsp;'Revenue': 'sum'<br>})<br>rfm.columns = ['Recency', 'Frequency', 'Monetary']</div>
   </div>
-
-  <!-- RECOMMENDATIONS -->
   <div class="card">
     <h3>Business Recommendations</h3>
     <p class="sub">Turn insights into revenue with these 4 strategies.</p>
@@ -255,25 +227,99 @@ footer a{color:var(--muted)}
       <tr><td>Medium</td><td>Predict Early — Flag new customers with high-value potential</td><td>New Customers</td></tr>
     </table>
   </div>
-
-  <!-- SQL -->
   <div class="card">
     <h3>SQL Logic Example</h3>
     <p class="sub">How core RFM metrics are calculated in a relational database.</p>
     <div class="code-block">-- Calculate total revenue per customer<br>SELECT CustomerID, SUM(Quantity * UnitPrice) AS Revenue<br>FROM online_retail<br>GROUP BY CustomerID;<br><br>-- Segment customers using NTILE<br>SELECT *, NTILE(3) OVER (ORDER BY Revenue DESC) AS revenue_segment<br>FROM ( ... ) t;</div>
   </div>
-
 </main>
-
 <footer>
   <div class="wrap">
     <span>© 2026 Nico Alfianto — Customer Value Analysis. Data Source: Kaggle Online Retail</span>
     <span><a href="https://github.com/nico-alfianto/customer-value-analysis-rfm-logistic-regression" target="_blank">GitHub</a> &nbsp;·&nbsp; <a href="https://nico-myproject.github.io">Portfolio</a></span>
   </div>
 </footer>
-
 <div class="modal" id="imageModal" onclick="closeModal()"><span class="modal-close">&times;</span><img id="modalImg" src="" alt="Full View"></div>
-
 <script>
-// --- RFM PLAYGROUND ---
-function rScore(
+// --- RFM PLAYGROUND - FIXED ---
+function rScoreRecency(d){
+  if(d<=7) return 5;
+  if(d<=30) return 4;
+  if(d<=90) return 3;
+  if(d<=180) return 2;
+  return 1;
+}
+function rScoreFreq(f){
+  if(f>=20) return 5;
+  if(f>=10) return 4;
+  if(f>=5) return 3;
+  if(f>=2) return 2;
+  return 1;
+}
+function rScoreMoney(m){
+  if(m>=2500) return 5;
+  if(m>=1200) return 4;
+  if(m>=500) return 3;
+  if(m>=150) return 2;
+  return 1;
+}
+function goRFM(){
+  var r=+document.getElementById('pgRecency').value;
+  var f=+document.getElementById('pgFreq').value;
+  var m=+document.getElementById('pgMoney').value;
+  var sR=rScoreRecency(r), sF=rScoreFreq(f), sM=rScoreMoney(m);
+  document.getElementById('pgR').textContent=r+' days ago';
+  document.getElementById('pgF').textContent=f+' orders';
+  document.getElementById('pgM').textContent='£'+m.toLocaleString('en-US');
+  document.getElementById('pgAOV').textContent='£'+Math.round(m/f).toLocaleString('en-US');
+  document.getElementById('scoreR').textContent=sR;
+  document.getElementById('scoreF').textContent=sF;
+  document.getElementById('scoreM').textContent=sM;
+  document.getElementById('rfmTotal').textContent=''+sR+sF+sM;
+  // Simplified logistic regression on normalized RFM scores
+  // Monetary strongest, then Frequency, then Recency
+  var z=-4.2 + 0.85*sM + 0.55*sF + 0.35*sR;
+  var p=Math.round(100/(1+Math.exp(-z)));
+  if(p>99) p=99; if(p<1) p=1;
+  document.getElementById('pgProb').textContent=p+'%';
+  document.getElementById('pgConf').textContent='Probability of being High-Value • Log-odds (z) = '+z.toFixed(2)+' • Threshold: 50%';
+  var fill=document.getElementById('pgFill'), badge=document.getElementById('pgBadge');
+  fill.style.width=p+'%';
+  var seg, desc, action, badgeClass;
+  if(sR>=4 && sF>=4 && sM>=4){ seg='Champions'; desc='Top 1% — Bought recently, often, and spent big'; action='Protect this VIP. Give early access and premium service. Do not give large discounts, you will lose margin on a customer who already loves you.'; badgeClass='pg-badge gold'; fill.style.background='#FACC15'; }
+  else if(sM>=4 && sR<=2){ seg='At-Risk VIP'; desc='Spent big before, but has not bought in a while'; action='Win-back campaign now. Send personalized offer + reminder. This VIP is about to churn if you do nothing.'; badgeClass='pg-badge red'; fill.style.background='#EF4444'; }
+  else if(sR>=4 && sF<=2 && sM<=2){ seg='New Customer'; desc='Just bought, low frequency and spend — high potential'; action='Onboard fast. Welcome email + second purchase incentive within 14 days to build habit.'; badgeClass='pg-badge green'; fill.style.background='#22C55E'; }
+  else if(sR<=2 && sF<=2 && sM<=2){ seg='Hibernating'; desc='Has not bought in a long time, low value'; action='Low-cost reactivation only. Automated email, do not waste big discount budget here.'; badgeClass='pg-badge gray'; fill.style.background='#9CA3AF'; }
+  else if(p>=60){ seg='Potential Loyalist'; desc='Above average on RFM — trending to High-Value'; action='Upsell the middle. Targeted offer to increase Frequency and push to Champions.'; badgeClass='pg-badge gold'; fill.style.background='#FACC15'; }
+  else { seg='Needs Attention'; desc='Mixed RFM — needs nurturing'; action='Nurture with relevant recommendations and small incentive to increase Frequency.'; badgeClass='pg-badge gray'; fill.style.background='#9CA3AF'; }
+  badge.textContent=seg; badge.className=badgeClass;
+  document.getElementById('rfmDesc').textContent=desc;
+  document.getElementById('pgAction').textContent=action;
+  // Contrib
+  var parts=[{label:'Monetary Score '+sM+' (Total £'+m.toLocaleString('en-US')+')',val:0.85*sM},{label:'Frequency Score '+sF+' ('+f+' orders)',val:0.55*sF},{label:'Recency Score '+sR+' ('+r+' days ago)',val:0.35*sR},{label:'Base Rate (Intercept)',val:-4.2}];
+  var cBox=document.getElementById('pgContrib');
+  cBox.innerHTML='';
+  parts.sort(function(a,b){return Math.abs(b.val)-Math.abs(a.val);}).forEach(function(pt){
+    var color=pt.val>=0?'#FDE68A':'#FCA5A5';
+    var sign=pt.val>=0?'+':'';
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;justify-content:space-between;font-size:13px;';
+    row.innerHTML='<span style="color:var(--muted)">'+pt.label+'</span><b style="color:'+color+'">'+sign+pt.val.toFixed(2)+'</b>';
+    cBox.appendChild(row);
+  });
+}
+function loadPresetRFM(type,btn){
+  document.querySelectorAll('#pgPreset button').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  if(type==='champion'){ document.getElementById('pgRecency').value=5; document.getElementById('pgFreq').value=25; document.getElementById('pgMoney').value=3500; }
+  else if(type==='atrisk'){ document.getElementById('pgRecency').value=200; document.getElementById('pgFreq').value=18; document.getElementById('pgMoney').value=3000; }
+  else if(type==='new'){ document.getElementById('pgRecency').value=3; document.getElementById('pgFreq').value=1; document.getElementById('pgMoney').value=45; }
+  else if(type==='hibernating'){ document.getElementById('pgRecency').value=320; document.getElementById('pgFreq').value=2; document.getElementById('pgMoney').value=80; }
+  goRFM();
+}
+function openModal(src){ document.getElementById('modalImg').src=src; document.getElementById('imageModal').classList.add('active'); }
+function closeModal(){ document.getElementById('imageModal').classList.remove('active'); }
+goRFM();
+</script>
+</body>
+</html>
